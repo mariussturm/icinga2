@@ -433,10 +433,10 @@ void Checkable::ProcessCheckResult(const CheckResult::Ptr& cr, const MessageOrig
 
 	if (hardChange) {
 		OnStateChange(GetSelf(), cr, StateTypeHard, origin);
-		Log(LogNotice, "Checkable", "State Change: Checkable " + GetName() + " hard state change from " + old_state_str + " to " + new_state_str + " detected.");
+		Log(LogNotice, "Checkable", "State Change: Checkable " + GetName() + " hard state change from " + old_state_str + " to " + new_state_str + " detected.", IsLogVerbose());
 	} else if (stateChange) {
 		OnStateChange(GetSelf(), cr, StateTypeSoft, origin);
-		Log(LogNotice, "Checkable", "State Change: Checkable " + GetName() + " soft state change from " + old_state_str + " to " + new_state_str + " detected.");
+		Log(LogNotice, "Checkable", "State Change: Checkable " + GetName() + " soft state change from " + old_state_str + " to " + new_state_str + " detected.", IsLogVerbose());
 	}
 
 	if (GetStateType() == StateTypeSoft || hardChange || recovery)
@@ -448,12 +448,12 @@ void Checkable::ProcessCheckResult(const CheckResult::Ptr& cr, const MessageOrig
 	if (!was_flapping && is_flapping) {
 		OnNotificationsRequested(GetSelf(), NotificationFlappingStart, cr, "", "");
 
-		Log(LogNotice, "Checkable", "Flapping: Checkable " + GetName() + " started flapping (" + Convert::ToString(GetFlappingThreshold()) + "% < " + Convert::ToString(GetFlappingCurrent()) + "%).");
+		Log(LogNotice, "Checkable", "Flapping: Checkable " + GetName() + " started flapping (" + Convert::ToString(GetFlappingThreshold()) + "% < " + Convert::ToString(GetFlappingCurrent()) + "%).", IsLogVerbose());
 		OnFlappingChanged(GetSelf(), FlappingStarted);
 	} else if (was_flapping && !is_flapping) {
 		OnNotificationsRequested(GetSelf(), NotificationFlappingEnd, cr, "", "");
 
-		Log(LogNotice, "Checkable", "Flapping: Checkable " + GetName() + " stopped flapping (" + Convert::ToString(GetFlappingThreshold()) + "% >= " + Convert::ToString(GetFlappingCurrent()) + "%).");
+		Log(LogNotice, "Checkable", "Flapping: Checkable " + GetName() + " stopped flapping (" + Convert::ToString(GetFlappingThreshold()) + "% >= " + Convert::ToString(GetFlappingCurrent()) + "%).", IsLogVerbose());
 		OnFlappingChanged(GetSelf(), FlappingStopped);
 	} else if (send_notification)
 		OnNotificationsRequested(GetSelf(), recovery ? NotificationRecovery : NotificationProblem, cr, "", "");

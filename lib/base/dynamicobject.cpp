@@ -74,6 +74,11 @@ bool DynamicObject::IsPaused(void) const
 	return GetPaused();
 }
 
+bool DynamicObject::IsLogVerbose(void) const
+{
+        return GetLogVerbose();
+}
+
 void DynamicObject::SetExtension(const String& key, const Object::Ptr& object)
 {
 	Dictionary::Ptr extensions = GetExtensions();

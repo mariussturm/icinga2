@@ -53,7 +53,7 @@ bool UserGroup::EvaluateObjectRuleOne(const User::Ptr& user, const ObjectRule& r
 
 	std::ostringstream msgbuf2;
 	msgbuf2 << "Assigning membership for group '" << rule.GetName() << "' to user '" << user->GetName() << "' for rule " << di;
-	Log(LogDebug, "UserGroup", msgbuf2.str());
+	Log(LogDebug, "UserGroup", msgbuf2.str(), user->IsLogVerbose());
 
 	String group_name = rule.GetName();
 	UserGroup::Ptr group = UserGroup::GetByName(group_name);

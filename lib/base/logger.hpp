@@ -38,6 +38,7 @@ struct LogEntry {
 	LogSeverity Severity; /**< The severity of this log entry. */
 	String Facility; /**< The facility this log entry belongs to. */
 	String Message; /**< The log entry's message. */
+	bool LogVerbose; /**< If override is sent for logging */
 };
 
 /**

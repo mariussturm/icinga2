@@ -56,7 +56,7 @@ bool Service::EvaluateApplyRuleOne(const Host::Ptr& host, const ApplyRule& rule)
 
 	std::ostringstream msgbuf2;
 	msgbuf2 << "Applying service '" << rule.GetName() << "' to host '" << host->GetName() << "' for rule " << di;
-	Log(LogDebug, "Service", msgbuf2.str());
+	Log(LogDebug, "Service", msgbuf2.str(), host->IsLogVerbose());
 
 	ConfigItemBuilder::Ptr builder = make_shared<ConfigItemBuilder>(di);
 	builder->SetType("Service");

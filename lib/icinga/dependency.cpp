@@ -66,10 +66,10 @@ void Dependency::OnStateLoaded(void)
 
 	if (childHost) {
 		if (GetChildServiceName().IsEmpty()) {
-			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' child host '" + GetChildHostName() + ".");
+			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' child host '" + GetChildHostName() + ".", IsLogVerbose());
 			m_Child = childHost;
 		} else {
-			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' child host '" + GetChildHostName() + "' service '" + GetChildServiceName() + "' .");
+			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' child host '" + GetChildHostName() + "' service '" + GetChildServiceName() + "' .", IsLogVerbose());
 			m_Child = childHost->GetServiceByShortName(GetChildServiceName());
 		}
 	}
@@ -83,10 +83,10 @@ void Dependency::OnStateLoaded(void)
 
 	if (parentHost) {
 		if (GetParentServiceName().IsEmpty()) {
-			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' parent host '" + GetParentHostName() + ".");
+			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' parent host '" + GetParentHostName() + ".", IsLogVerbose());
 			m_Parent = parentHost;
 		} else {
-			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' parent host '" + GetParentHostName() + "' service '" + GetParentServiceName() + "' .");
+			Log(LogDebug, "Dependency", "Dependency '" + GetName() + "' parent host '" + GetParentHostName() + "' service '" + GetParentServiceName() + "' .", IsLogVerbose());
 			m_Parent = parentHost->GetServiceByShortName(GetParentServiceName());
 		}
 	}
@@ -121,19 +121,19 @@ bool Dependency::IsAvailable(DependencyType dt) const
 
 	/* ignore if it's the same checkable object */
 	if (parent == GetChild()) {
-		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Parent and child " + (service ? "service" : "host") + " are identical.");
+		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Parent and child " + (service ? "service" : "host") + " are identical.", IsLogVerbose());
 		return true;
 	}
 
 	/* ignore pending  */
 	if (!parent->GetLastCheckResult()) {
-		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: " + (service ? "Service" : "Host") + " '" + parent->GetName() + "' hasn't been checked yet.");
+		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: " + (service ? "Service" : "Host") + " '" + parent->GetName() + "' hasn't been checked yet.", IsLogVerbose() || parent->IsLogVerbose());
 		return true;
 	}
 
 	/* ignore soft states */
 	if (parent->GetStateType() == StateTypeSoft) {
-		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: " + (service ? "Service" : "Host") + " '" + parent->GetName() + "' is in a soft state.");
+		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: " + (service ? "Service" : "Host") + " '" + parent->GetName() + "' is in a soft state.", IsLogVerbose() || parent->IsLogVerbose());
 		return true;
 	}
 
@@ -146,28 +146,28 @@ bool Dependency::IsAvailable(DependencyType dt) const
 
 	/* check state */
 	if (state & GetStateFilter()) {
-		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: " + (service ? "Service" : "Host") + " '" + parent->GetName() + "' matches state filter.");
+		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: " + (service ? "Service" : "Host") + " '" + parent->GetName() + "' matches state filter.", IsLogVerbose() || parent->IsLogVerbose());
 		return true;
 	}
 
 	/* ignore if not in time period */
 	TimePeriod::Ptr tp = GetPeriod();
 	if (tp && !tp->IsInside(Utility::GetTime())) {
-		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Outside time period.");
+		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Outside time period.", IsLogVerbose() || parent->IsLogVerbose());
 		return true;
 	}
 
 	if (dt == DependencyCheckExecution && !GetDisableChecks()) {
-		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Checks are not disabled.");
+		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Checks are not disabled.", IsLogVerbose() || parent->IsLogVerbose());
 		return true;
 	} else if (dt == DependencyNotification && !GetDisableNotifications()) {
-		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Notifications are not disabled");
+		Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' passed: Notifications are not disabled", IsLogVerbose() || parent->IsLogVerbose());
 		return true;
 	}
 
 	Log(LogNotice, "Dependency", "Dependency '" + GetName() + "' failed. Parent " +
 		(service ? "service" : "host") + " '" + parent->GetName() + "' is " +
-		(service ? Service::StateToString(service->GetState()) : Host::StateToString(host->GetState())));
+		(service ? Service::StateToString(service->GetState()) : Host::StateToString(host->GetState())), IsLogVerbose() || parent->IsLogVerbose());
 	return false;
 }
 

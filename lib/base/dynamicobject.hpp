@@ -60,6 +60,8 @@ public:
 	bool IsActive(void) const;
 	bool IsPaused(void) const;
 
+	bool IsLogVerbose(void) const;
+
 	void SetExtension(const String& key, const Object::Ptr& object);
 	Object::Ptr GetExtension(const String& key);
 	void ClearExtension(const String& key);

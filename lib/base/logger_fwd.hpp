@@ -41,7 +41,7 @@ enum LogSeverity
 };
 
 void I2_BASE_API Log(LogSeverity severity, const String& facility,
-    const String& message);
+    const String& message, bool log_verbose = false);
 
 }
 

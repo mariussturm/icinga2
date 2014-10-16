@@ -76,15 +76,17 @@ std::set<Logger::Ptr> Logger::GetLoggers(void)
  * @param severity The message severity.
  * @param facility The log facility.
  * @param message The message.
+ * @param log_verbose Override for extra verbose - Optional
  */
 void icinga::Log(LogSeverity severity, const String& facility,
-    const String& message)
+    const String& message, bool log_verbose)
 {
 	LogEntry entry;
 	entry.Timestamp = Utility::GetTime();
 	entry.Severity = severity;
 	entry.Facility = facility;
 	entry.Message = message;
+	entry.LogVerbose = log_verbose;
 
 	if (severity >= LogWarning) {
 		ContextTrace context;
@@ -102,7 +104,7 @@ void icinga::Log(LogSeverity severity, const String& facility,
 		if (!logger->IsActive())
 			continue;
 
-		if (entry.Severity >= logger->GetMinSeverity())
+		if ((entry.Severity >= logger->GetMinSeverity()) || (entry.LogVerbose))
 			logger->ProcessLogEntry(entry);
 	}
 

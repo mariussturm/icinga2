@@ -231,7 +231,7 @@ void Notification::BeginExecuteNotification(NotificationType type, const CheckRe
 		TimePeriod::Ptr tp = GetPeriod();
 
 		if (tp && !tp->IsInside(Utility::GetTime())) {
-			Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': not in timeperiod");
+			Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': not in timeperiod", tp->IsLogVerbose() || checkable->IsLogVerbose());
 			return;
 		}
 
@@ -240,22 +240,22 @@ void Notification::BeginExecuteNotification(NotificationType type, const CheckRe
 
 		if (type == NotificationProblem) {
 			if (times && times->Contains("begin") && now < checkable->GetLastHardStateChange() + times->Get("begin")) {
-				Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': before escalation range");
+				Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': before escalation range", tp->IsLogVerbose() || checkable->IsLogVerbose());
 				return;
 			}
 
 			if (times && times->Contains("end") && now > checkable->GetLastHardStateChange() + times->Get("end")) {
-				Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': after escalation range");
+				Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': after escalation range", tp->IsLogVerbose() || checkable->IsLogVerbose());
 				return;
 			}
 		}
 
 		unsigned long ftype = 1 << type;
 
-		Log(LogDebug, "Notification", "FType=" + Convert::ToString(ftype) + ", TypeFilter=" + Convert::ToString(GetTypeFilter()));
+		Log(LogDebug, "Notification", "FType=" + Convert::ToString(ftype) + ", TypeFilter=" + Convert::ToString(GetTypeFilter()), tp->IsLogVerbose() || checkable->IsLogVerbose());
 
 		if (!(ftype & GetTypeFilter())) {
-			Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': type filter does not match");
+			Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': type filter does not match", tp->IsLogVerbose() || checkable->IsLogVerbose());
 			return;
 		}
 
@@ -271,7 +271,7 @@ void Notification::BeginExecuteNotification(NotificationType type, const CheckRe
 			fstate = HostStateToFilter(host->GetState());
 
 		if (!(fstate & GetStateFilter())) {
-			Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': state filter does not match");
+			Log(LogNotice, "Notification", "Not sending notifications for notification object '" + GetName() + "': state filter does not match", tp->IsLogVerbose() || checkable->IsLogVerbose());
 			return;
 		}
 	}
@@ -303,7 +303,7 @@ void Notification::BeginExecuteNotification(NotificationType type, const CheckRe
 		if (!user->GetEnableNotifications() || !CheckNotificationUserFilters(type, user, force))
 			continue;
 
-		Log(LogInformation, "Notification", "Sending notification for user '" + user->GetName() + "'");
+		Log(LogInformation, "Notification", "Sending notification for user '" + user->GetName() + "'", checkable->IsLogVerbose() || user->IsLogVerbose());
 		Utility::QueueAsyncCallback(boost::bind(&Notification::ExecuteNotificationHelper, this, type, user, cr, force, author, text));
 
 		/* collect all notified users */
@@ -323,7 +323,7 @@ bool Notification::CheckNotificationUserFilters(NotificationType type, const Use
 
 		if (tp && !tp->IsInside(Utility::GetTime())) {
 			Log(LogNotice, "Notification", "Not sending notifications for notification object '" +
-			    GetName() + " and user '" + user->GetName() + "': user not in timeperiod");
+			    GetName() + " and user '" + user->GetName() + "': user not in timeperiod", tp->IsLogVerbose() || user->IsLogVerbose());
 			return false;
 		}
 
@@ -331,7 +331,7 @@ bool Notification::CheckNotificationUserFilters(NotificationType type, const Use
 
 		if (!(ftype & user->GetTypeFilter())) {
 			Log(LogNotice, "Notification", "Not sending notifications for notification object '" +
-			    GetName() + " and user '" + user->GetName() + "': type filter does not match");
+			    GetName() + " and user '" + user->GetName() + "': type filter does not match", tp->IsLogVerbose() || user->IsLogVerbose());
 			return false;
 		}
 
@@ -349,7 +349,7 @@ bool Notification::CheckNotificationUserFilters(NotificationType type, const Use
 
 		if (!(fstate & user->GetStateFilter())) {
 			Log(LogNotice, "Notification", "Not sending notifications for notification object '" +
-			    GetName() + " and user '" + user->GetName() + "': state filter does not match");
+			    GetName() + " and user '" + user->GetName() + "': state filter does not match", tp->IsLogVerbose() || user->IsLogVerbose());
 			return false;
 		}
 	}
@@ -365,7 +365,7 @@ void Notification::ExecuteNotificationHelper(NotificationType type, const User::
 		NotificationCommand::Ptr command = GetCommand();
 
 		if (!command) {
-			Log(LogDebug, "Notification", "No notification_command found for notification '" + GetName() + "'. Skipping execution.");
+			Log(LogDebug, "Notification", "No notification_command found for notification '" + GetName() + "'. Skipping execution.", command->IsLogVerbose() || user->IsLogVerbose());
 			return;
 		}
 

@@ -472,7 +472,7 @@ Array::Ptr LegacyTimePeriod::ScriptFunc(const TimePeriod::Ptr& tp, double begin,
 		}
 	}
 
-	Log(LogDebug, "LegacyTimePeriod", "Legacy timeperiod update returned " + Convert::ToString(static_cast<long>(segments->GetLength())) + " segments.");
+	Log(LogDebug, "LegacyTimePeriod", "Legacy timeperiod update returned " + Convert::ToString(static_cast<long>(segments->GetLength())) + " segments.", tp->IsLogVerbose());
 
 	return segments;
 }

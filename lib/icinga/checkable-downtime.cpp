@@ -105,7 +105,7 @@ String Checkable::AddDowntime(const String& author, const String& comment,
 	}
 
 	Log(LogNotice, "Checkable", "Added downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) +
-	    "' between '" + Utility::FormatDateTime("%Y-%m-%d %H:%M:%S", startTime) + "' and '" + Utility::FormatDateTime("%Y-%m-%d %H:%M:%S", endTime) + "'.");
+	    "' between '" + Utility::FormatDateTime("%Y-%m-%d %H:%M:%S", startTime) + "' and '" + Utility::FormatDateTime("%Y-%m-%d %H:%M:%S", endTime) + "'.", IsLogVerbose());
 
 	OnDowntimeAdded(GetSelf(), downtime, origin);
 

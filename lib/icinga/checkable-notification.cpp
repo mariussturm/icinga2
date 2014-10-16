@@ -51,7 +51,7 @@ void Checkable::SendNotifications(NotificationType type, const CheckResult::Ptr&
 
 	if (!IcingaApplication::GetInstance()->GetEnableNotifications() || !GetEnableNotifications()) {
 		if (!force) {
-			Log(LogInformation, "Checkable", "Notifications are disabled for service '" + GetName() + "'.");
+			Log(LogInformation, "Checkable", "Notifications are disabled for service '" + GetName() + "'.", IsLogVerbose());
 			return;
 		}
 
@@ -65,7 +65,7 @@ void Checkable::SendNotifications(NotificationType type, const CheckResult::Ptr&
 	if (notifications.empty())
 		Log(LogInformation, "Checkable", "Checkable '" + GetName() + "' does not have any notifications.");
 
-	Log(LogDebug, "Checkable", "Checkable '" + GetName() + "' has " + Convert::ToString(notifications.size()) + " notification(s).");
+	Log(LogDebug, "Checkable", "Checkable '" + GetName() + "' has " + Convert::ToString(notifications.size()) + " notification(s).", IsLogVerbose());
 
 	BOOST_FOREACH(const Notification::Ptr& notification, notifications) {
 		try {

@@ -61,6 +61,8 @@ abstract class DynamicObject
 	Dictionary::Ptr authority_info;
 	[protected] Dictionary::Ptr extensions;
 
+	[config, get_protected] bool log_verbose;
+
 	[state] Value override_vars;
 };
 
