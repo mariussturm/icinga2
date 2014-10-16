@@ -256,7 +256,7 @@ void IdoPgsqlConnection::Reconnect(void)
 			if (row)
 				endpoint_name = row->Get("endpoint_name");
 			else
-				Log(LogNotice, "IdoPgsqlConnection", "Empty program status table");
+				Log(LogNotice, "IdoPgsqlConnection", "Empty program status table", IsLogVerbose() || my_endpoint->IsLogVerbose());
 
 			/* if we did not write into the database earlier, another instance is active */
 			if (endpoint_name != my_endpoint->GetName()) {
@@ -270,7 +270,7 @@ void IdoPgsqlConnection::Reconnect(void)
 				double status_update_age = Utility::GetTime() - status_update_time;
 
 				Log(LogNotice, "IdoPgsqlConnection", "Last update by '" +
-				    endpoint_name + "' was " + Convert::ToString(status_update_age) + "s ago.");
+				    endpoint_name + "' was " + Convert::ToString(status_update_age) + "s ago.", IsLogVerbose() || my_endpoint->IsLogVerbose());
 
 				if (status_update_age < GetFailoverTimeout()) {
 					PQfinish(m_Connection);
@@ -282,7 +282,7 @@ void IdoPgsqlConnection::Reconnect(void)
 				/* activate the IDO only, if we're authoritative in this zone */
 				if (IsPaused()) {
 					Log(LogNotice, "IdoPgsqlConnection", "Local endpoint '" +
-					    my_endpoint->GetName() + "' is not authoritative, bailing out.");
+					    my_endpoint->GetName() + "' is not authoritative, bailing out.", IsLogVerbose() || my_endpoint->IsLogVerbose());
 
 					PQfinish(m_Connection);
 					m_Connection = NULL;
@@ -291,7 +291,7 @@ void IdoPgsqlConnection::Reconnect(void)
 				}
 			}
 
-			Log(LogNotice, "IdoPgsqlConnection", "Enabling IDO connection.");
+			Log(LogNotice, "IdoPgsqlConnection", "Enabling IDO connection.", IsLogVerbose() || my_endpoint->IsLogVerbose());
 		}
 
 		std::ostringstream msgbuf;
@@ -337,7 +337,7 @@ void IdoPgsqlConnection::Reconnect(void)
 	BOOST_FOREACH(const DbObject::Ptr& dbobj, active_dbobjs) {
 		if (dbobj->GetObject() == NULL) {
 			Log(LogNotice, "IdoPgsqlConnection", "Deactivate deleted object name1: '" + Convert::ToString(dbobj->GetName1() +
-			    "' name2: '" + Convert::ToString(dbobj->GetName2() + "'.")));
+			    "' name2: '" + Convert::ToString(dbobj->GetName2() + "'.")), IsLogVerbose());
 			DeactivateObject(dbobj);
 		}
 	}
@@ -714,7 +714,7 @@ void IdoPgsqlConnection::InternalExecuteQuery(const DbQuery& query, DbQueryType 
 	if (type == DbQueryInsert && query.Table == "notifications" && query.NotificationObject) { // FIXME remove hardcoded table name
 		String idField = "notification_id";
 		SetNotificationInsertID(query.NotificationObject, GetSequenceValue(GetTablePrefix() + query.Table, idField));
-		Log(LogDebug, "IdoPgsqlConnection", "saving contactnotification notification_id=" + Convert::ToString(static_cast<long>(GetSequenceValue(GetTablePrefix() + query.Table, idField))));
+		Log(LogDebug, "IdoPgsqlConnection", "saving contactnotification notification_id=" + Convert::ToString(static_cast<long>(GetSequenceValue(GetTablePrefix() + query.Table, idField))), IsLogVerbose());
 	}
 }
 

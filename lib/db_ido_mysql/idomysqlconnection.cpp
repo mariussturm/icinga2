@@ -260,7 +260,7 @@ void IdoMysqlConnection::Reconnect(void)
 			if (row)
 				endpoint_name = row->Get("endpoint_name");
 			else
-				Log(LogNotice, "IdoMysqlConnection", "Empty program status table");
+				Log(LogNotice, "IdoMysqlConnection", "Empty program status table", my_endpoint->IsLogVerbose() || IsLogVerbose());
 
 			/* if we did not write into the database earlier, another instance is active */
 			if (endpoint_name != my_endpoint->GetName()) {
@@ -274,7 +274,7 @@ void IdoMysqlConnection::Reconnect(void)
 				double status_update_age = Utility::GetTime() - status_update_time;
 
 				Log(LogNotice, "IdoMysqlConnection", "Last update by '" +
-				    endpoint_name + "' was " + Convert::ToString(status_update_age) + "s ago.");
+				    endpoint_name + "' was " + Convert::ToString(status_update_age) + "s ago.", my_endpoint->IsLogVerbose() || IsLogVerbose());
 
 				if (status_update_age < GetFailoverTimeout()) {
 					mysql_close(&m_Connection);
@@ -286,7 +286,7 @@ void IdoMysqlConnection::Reconnect(void)
 				/* activate the IDO only, if we're authoritative in this zone */
 				if (IsPaused()) {
 					Log(LogNotice, "IdoMysqlConnection", "Local endpoint '" +
-					    my_endpoint->GetName() + "' is not authoritative, bailing out.");
+					    my_endpoint->GetName() + "' is not authoritative, bailing out.", my_endpoint->IsLogVerbose() || IsLogVerbose());
 
 					mysql_close(&m_Connection);
 					m_Connected = false;
@@ -295,7 +295,7 @@ void IdoMysqlConnection::Reconnect(void)
 				}
 			}
 
-			Log(LogNotice, "IdoMysqlConnection", "Enabling IDO connection.");
+			Log(LogNotice, "IdoMysqlConnection", "Enabling IDO connection.", my_endpoint->IsLogVerbose() || IsLogVerbose());
 		}
 
 		std::ostringstream msgbuf;
@@ -341,7 +341,7 @@ void IdoMysqlConnection::Reconnect(void)
 	BOOST_FOREACH(const DbObject::Ptr& dbobj, active_dbobjs) {
 		if (dbobj->GetObject() == NULL) {
 			Log(LogNotice, "IdoMysqlConnection", "Deactivate deleted object name1: '" + Convert::ToString(dbobj->GetName1() +
-			    "' name2: '" + Convert::ToString(dbobj->GetName2() + "'.")));
+			    "' name2: '" + Convert::ToString(dbobj->GetName2() + "'.")), IsLogVerbose());
 			DeactivateObject(dbobj);
 		}
 	}

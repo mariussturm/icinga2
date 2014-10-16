@@ -131,7 +131,7 @@ void Checkable::RemoveDowntime(const String& id, bool cancelled, const MessageOr
 	String config_owner = downtime->GetConfigOwner();
 
 	if (!config_owner.IsEmpty()) {
-		Log(LogWarning, "Checkable", "Cannot remove downtime with ID '" + Convert::ToString(legacy_id) + "'. It is owned by scheduled downtime object '" + config_owner + "'");
+		Log(LogWarning, "Checkable", "Cannot remove downtime with ID '" + Convert::ToString(legacy_id) + "'. It is owned by scheduled downtime object '" + config_owner + "'", owner->IsLogVerbose());
 		return;
 	}
 
@@ -145,7 +145,7 @@ void Checkable::RemoveDowntime(const String& id, bool cancelled, const MessageOr
 
 	downtime->SetWasCancelled(cancelled);
 
-	Log(LogNotice, "Checkable", "Removed downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "' from service '" + owner->GetName() + "'.");
+	Log(LogNotice, "Checkable", "Removed downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "' from service '" + owner->GetName() + "'.", owner->IsLogVerbose());
 
 	OnDowntimeRemoved(owner, downtime, origin);
 }
@@ -178,16 +178,16 @@ void Checkable::TriggerDowntime(const String& id)
 		return;
 
 	if (downtime->IsActive() && downtime->IsTriggered()) {
-		Log(LogDebug, "Checkable", "Not triggering downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "': already triggered.");
+		Log(LogDebug, "Checkable", "Not triggering downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "': already triggered.", owner->IsLogVerbose());
 		return;
 	}
 
 	if (downtime->IsExpired()) {
-		Log(LogDebug, "Checkable", "Not triggering downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "': expired.");
+		Log(LogDebug, "Checkable", "Not triggering downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "': expired.", owner->IsLogVerbose());
 		return;
 	}
 
-	Log(LogNotice, "Checkable", "Triggering downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "'.");
+	Log(LogNotice, "Checkable", "Triggering downtime with ID '" + Convert::ToString(downtime->GetLegacyId()) + "'.", owner->IsLogVerbose());
 
 	if (downtime->GetTriggerTime() == 0)
 		downtime->SetTriggerTime(Utility::GetTime());

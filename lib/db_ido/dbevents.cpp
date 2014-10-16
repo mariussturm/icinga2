@@ -282,7 +282,7 @@ void DbEvents::AddCommentInternal(const Checkable::Ptr& checkable, const Comment
 		return;
 	}
 
-	Log(LogDebug, "DbEvents", "adding service comment (id = " + Convert::ToString(comment->GetLegacyId()) + ") for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "adding service comment (id = " + Convert::ToString(comment->GetLegacyId()) + ") for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	/* add the service comment */
 	AddCommentByType(checkable, comment, historical);
@@ -307,7 +307,7 @@ void DbEvents::AddCommentByType(const DynamicObject::Ptr& object, const Comment:
 		fields1->Set("comment_type", 1);
 		fields1->Set("internal_comment_id", comment->GetLegacyId());
 	} else {
-		Log(LogDebug, "DbEvents", "unknown object type for adding comment.");
+		Log(LogDebug, "DbEvents", "unknown object type for adding comment.", object->IsLogVerbose());
 		return;
 	}
 
@@ -340,7 +340,7 @@ void DbEvents::AddCommentByType(const DynamicObject::Ptr& object, const Comment:
 
 void DbEvents::RemoveComments(const Checkable::Ptr& checkable)
 {
-	Log(LogDebug, "DbEvents", "removing service comments for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "removing service comments for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	DbQuery query1;
 	query1.Table = "comments";
@@ -358,7 +358,7 @@ void DbEvents::RemoveComment(const Checkable::Ptr& checkable, const Comment::Ptr
 		return;
 	}
 
-	Log(LogDebug, "DbEvents", "removing service comment (id = " + Convert::ToString(comment->GetLegacyId()) + ") for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "removing service comment (id = " + Convert::ToString(comment->GetLegacyId()) + ") for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	/* Status */
 	DbQuery query1;
@@ -427,7 +427,7 @@ void DbEvents::AddDowntimeInternal(const Checkable::Ptr& checkable, const Downti
 		return;
 	}
 
-	Log(LogDebug, "DbEvents", "adding service downtime (id = " + Convert::ToString(downtime->GetLegacyId()) + ") for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "adding service downtime (id = " + Convert::ToString(downtime->GetLegacyId()) + ") for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	/* add the downtime */
 	AddDowntimeByType(checkable, downtime, historical);}
@@ -446,7 +446,7 @@ void DbEvents::AddDowntimeByType(const Checkable::Ptr& checkable, const Downtime
 		fields1->Set("downtime_type", 1);
 		fields1->Set("internal_downtime_id", downtime->GetLegacyId());
 	} else {
-		Log(LogDebug, "DbEvents", "unknown object type for adding downtime.");
+		Log(LogDebug, "DbEvents", "unknown object type for adding downtime.", checkable->IsLogVerbose());
 		return;
 	}
 
@@ -485,7 +485,7 @@ void DbEvents::AddDowntimeByType(const Checkable::Ptr& checkable, const Downtime
 
 void DbEvents::RemoveDowntimes(const Checkable::Ptr& checkable)
 {
-	Log(LogDebug, "DbEvents", "removing service downtimes for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "removing service downtimes for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	DbQuery query1;
 	query1.Table = "scheduleddowntime";
@@ -503,7 +503,7 @@ void DbEvents::RemoveDowntime(const Checkable::Ptr& checkable, const Downtime::P
 		return;
 	}
 
-	Log(LogDebug, "DbEvents", "removing service downtime (id = " + Convert::ToString(downtime->GetLegacyId()) + ") for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "removing service downtime (id = " + Convert::ToString(downtime->GetLegacyId()) + ") for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	/* Status */
 	DbQuery query1;
@@ -547,7 +547,7 @@ void DbEvents::TriggerDowntime(const Checkable::Ptr& checkable, const Downtime::
 		return;
 	}
 
-	Log(LogDebug, "DbEvents", "updating triggered service downtime (id = " + Convert::ToString(downtime->GetLegacyId()) + ") for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "updating triggered service downtime (id = " + Convert::ToString(downtime->GetLegacyId()) + ") for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	double now = Utility::GetTime();
 	std::pair<unsigned long, unsigned long> time_bag = CompatUtility::ConvertTimestamp(now);
@@ -629,7 +629,7 @@ void DbEvents::TriggerDowntime(const Checkable::Ptr& checkable, const Downtime::
 void DbEvents::AddAcknowledgementHistory(const Checkable::Ptr& checkable, const String& author, const String& comment,
     AcknowledgementType type, double expiry)
 {
-	Log(LogDebug, "DbEvents", "add acknowledgement history for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add acknowledgement history for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	double now = Utility::GetTime();
 	std::pair<unsigned long, unsigned long> time_bag = CompatUtility::ConvertTimestamp(now);
@@ -669,14 +669,14 @@ void DbEvents::AddAcknowledgementHistory(const Checkable::Ptr& checkable, const 
 
 void DbEvents::AddAcknowledgement(const Checkable::Ptr& checkable, AcknowledgementType type)
 {
-	Log(LogDebug, "DbEvents", "add acknowledgement for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add acknowledgement for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	AddAcknowledgementInternal(checkable, type, true);
 }
 
 void DbEvents::RemoveAcknowledgement(const Checkable::Ptr& checkable)
 {
-	Log(LogDebug, "DbEvents", "remove acknowledgement for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "remove acknowledgement for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	AddAcknowledgementInternal(checkable, AcknowledgementNone, false);
 }
@@ -716,7 +716,7 @@ void DbEvents::AddAcknowledgementInternal(const Checkable::Ptr& checkable, Ackno
 void DbEvents::AddNotificationHistory(const Notification::Ptr& notification, const Checkable::Ptr& checkable, const std::set<User::Ptr>& users, NotificationType type,
     const CheckResult::Ptr& cr, const String& author, const String& text)
 {
-	Log(LogDebug, "DbEvents", "add notification history for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add notification history for '" + checkable->GetName() + "'", notification->IsLogVerbose() || checkable->IsLogVerbose());
 
 	/* start and end happen at the same time */
 	double now = Utility::GetTime();
@@ -768,7 +768,7 @@ void DbEvents::AddNotificationHistory(const Notification::Ptr& notification, con
 
 	/* filtered users */
 	BOOST_FOREACH(const User::Ptr& user, users) {
-		Log(LogDebug, "DbEvents", "add contact notification history for service '" + checkable->GetName() + "' and user '" + user->GetName() + "'.");
+		Log(LogDebug, "DbEvents", "add contact notification history for service '" + checkable->GetName() + "' and user '" + user->GetName() + "'.", notification->IsLogVerbose() || checkable->IsLogVerbose() || user->IsLogVerbose());
 
 		Dictionary::Ptr fields2 = make_shared<Dictionary>();
 		fields2->Set("contact_object_id", user);
@@ -788,7 +788,7 @@ void DbEvents::AddNotificationHistory(const Notification::Ptr& notification, con
 /* statehistory */
 void DbEvents::AddStateChangeHistory(const Checkable::Ptr& checkable, const CheckResult::Ptr& cr, StateType type)
 {
-	Log(LogDebug, "DbEvents", "add state change history for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add state change history for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	double now = Utility::GetTime();
 	std::pair<unsigned long, unsigned long> time_bag = CompatUtility::ConvertTimestamp(now);
@@ -1106,7 +1106,7 @@ void DbEvents::AddFlappingLogHistory(const Checkable::Ptr& checkable, FlappingSt
 
 void DbEvents::AddLogHistory(const Checkable::Ptr& checkable, String buffer, LogEntryType type)
 {
-	Log(LogDebug, "DbEvents", "add log entry history for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add log entry history for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	double now = Utility::GetTime();
 	std::pair<unsigned long, unsigned long> time_bag = CompatUtility::ConvertTimestamp(now);
@@ -1139,7 +1139,7 @@ void DbEvents::AddLogHistory(const Checkable::Ptr& checkable, String buffer, Log
 /* flappinghistory */
 void DbEvents::AddFlappingHistory(const Checkable::Ptr& checkable, FlappingState flapping_state)
 {
-	Log(LogDebug, "DbEvents", "add flapping history for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add flapping history for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	double now = Utility::GetTime();
 	std::pair<unsigned long, unsigned long> time_bag = CompatUtility::ConvertTimestamp(now);
@@ -1167,7 +1167,7 @@ void DbEvents::AddFlappingHistory(const Checkable::Ptr& checkable, FlappingState
 			fields1->Set("reason_type", 2);
 			break;
 		default:
-			Log(LogDebug, "DbEvents", "Unhandled flapping state: " + Convert::ToString(flapping_state));
+			Log(LogDebug, "DbEvents", "Unhandled flapping state: " + Convert::ToString(flapping_state), checkable->IsLogVerbose());
 			return;
 	}
 
@@ -1199,7 +1199,7 @@ void DbEvents::AddServiceCheckHistory(const Checkable::Ptr& checkable, const Che
 	if (!cr)
 		return;
 
-	Log(LogDebug, "DbEvents", "add service check history for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add service check history for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	Host::Ptr host;
 	Service::Ptr service;
@@ -1263,7 +1263,7 @@ void DbEvents::AddServiceCheckHistory(const Checkable::Ptr& checkable, const Che
 /* eventhandlers */
 void DbEvents::AddEventHandlerHistory(const Checkable::Ptr& checkable)
 {
-	Log(LogDebug, "DbEvents", "add eventhandler history for '" + checkable->GetName() + "'");
+	Log(LogDebug, "DbEvents", "add eventhandler history for '" + checkable->GetName() + "'", checkable->IsLogVerbose());
 
 	double now = Utility::GetTime();
 	std::pair<unsigned long, unsigned long> time_bag = CompatUtility::ConvertTimestamp(now);

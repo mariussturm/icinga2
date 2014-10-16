@@ -46,7 +46,7 @@ void DbConnection::OnConfigLoaded(void)
 	DynamicObject::OnConfigLoaded();
 
 	if (!GetEnableHa()) {
-		Log(LogDebug, "DbConnection", "HA functionality disabled. Won't pause IDO connection: " + GetName());
+		Log(LogDebug, "DbConnection", "HA functionality disabled. Won't pause IDO connection: " + GetName(), IsLogVerbose());
 		SetHAMode(HARunEverywhere);
 	}
 }
@@ -213,7 +213,7 @@ void DbConnection::CleanUpHandler(void)
 		CleanUpExecuteQuery(tables[i].name, tables[i].time_column, now - max_age);
 		Log(LogNotice, "DbConnection", "Cleanup (" + tables[i].name + "): " + Convert::ToString(max_age) +
 		    " now: " + Convert::ToString(now) +
-		    " old: " + Convert::ToString(now - max_age));
+		    " old: " + Convert::ToString(now - max_age), IsLogVerbose());
 	}
 
 }

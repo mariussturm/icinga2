@@ -79,7 +79,7 @@ void GraphiteWriter::ReconnectTimerHandler(void)
 
 	TcpSocket::Ptr socket = make_shared<TcpSocket>();
 
-	Log(LogNotice, "GraphiteWriter", "Reconnect to tcp socket on host '" + GetHost() + "' port '" + GetPort() + "'.");
+	Log(LogNotice, "GraphiteWriter", "Reconnect to tcp socket on host '" + GetHost() + "' port '" + GetPort() + "'.", IsLogVerbose());
 
 	try {
 		socket->Connect(GetHost(), GetPort());

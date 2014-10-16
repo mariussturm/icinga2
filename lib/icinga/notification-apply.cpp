@@ -64,7 +64,7 @@ bool Notification::EvaluateApplyRuleOne(const Checkable::Ptr& checkable, const A
 
 	std::ostringstream msgbuf2;
 	msgbuf2 << "Applying notification '" << rule.GetName() << "' to object '" << checkable->GetName() << "' for rule " << di;
-	Log(LogDebug, "Notification", msgbuf2.str());
+	Log(LogDebug, "Notification", msgbuf2.str(), checkable->IsLogVerbose());
 
 	ConfigItemBuilder::Ptr builder = make_shared<ConfigItemBuilder>(di);
 	builder->SetType("Notification");

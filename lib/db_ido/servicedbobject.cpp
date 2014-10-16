@@ -177,17 +177,17 @@ void ServiceDbObject::OnConfigUpdate(void)
 	Service::Ptr service = static_pointer_cast<Service>(GetObject());
 
 	/* service dependencies */
-	Log(LogDebug, "ServiceDbObject", "service dependencies for '" + service->GetName() + "'");
+	Log(LogDebug, "ServiceDbObject", "service dependencies for '" + service->GetName() + "'", service->IsLogVerbose());
 
 	BOOST_FOREACH(const Dependency::Ptr& dep, service->GetDependencies()) {
 		Checkable::Ptr parent = dep->GetParent();
 
 		if (!parent) {
-			Log(LogDebug, "ServiceDbObject", "Missing parent for dependency '" + dep->GetName() + "'.");
+			Log(LogDebug, "ServiceDbObject", "Missing parent for dependency '" + dep->GetName() + "'.", service->IsLogVerbose() || dep->IsLogVerbose());
 			continue;
 		}
 
-		Log(LogDebug, "ServiceDbObject", "service parents: " + parent->GetName());
+		Log(LogDebug, "ServiceDbObject", "service parents: " + parent->GetName(), service->IsLogVerbose() || dep->IsLogVerbose() || parent->IsLogVerbose());
 
 		int state_filter = dep->GetStateFilter();
 
@@ -212,10 +212,10 @@ void ServiceDbObject::OnConfigUpdate(void)
 	}
 
 	/* service contacts, contactgroups */
-	Log(LogDebug, "ServiceDbObject", "service contacts: " + service->GetName());
+	Log(LogDebug, "ServiceDbObject", "service contacts: " + service->GetName(), service->IsLogVerbose());
 
 	BOOST_FOREACH(const User::Ptr& user, CompatUtility::GetCheckableNotificationUsers(service)) {
-		Log(LogDebug, "ServiceDbObject", "service contacts: " + user->GetName());
+		Log(LogDebug, "ServiceDbObject", "service contacts: " + user->GetName(), service->IsLogVerbose() || user->IsLogVerbose());
 
 		Dictionary::Ptr fields_contact = make_shared<Dictionary>();
 		fields_contact->Set("service_id", DbValue::FromObjectInsertID(service));
@@ -230,10 +230,10 @@ void ServiceDbObject::OnConfigUpdate(void)
 		OnQuery(query_contact);
 	}
 
-	Log(LogDebug, "ServiceDbObject", "service contactgroups: " + service->GetName());
+	Log(LogDebug, "ServiceDbObject", "service contactgroups: " + service->GetName(), service->IsLogVerbose());
 
 	BOOST_FOREACH(const UserGroup::Ptr& usergroup, CompatUtility::GetCheckableNotificationUserGroups(service)) {
-		Log(LogDebug, "ServiceDbObject", "service contactgroups: " + usergroup->GetName());
+		Log(LogDebug, "ServiceDbObject", "service contactgroups: " + usergroup->GetName(), service->IsLogVerbose() || usergroup->IsLogVerbose());
 
 		Dictionary::Ptr fields_contact = make_shared<Dictionary>();
 		fields_contact->Set("service_id", DbValue::FromObjectInsertID(service));

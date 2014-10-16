@@ -249,7 +249,7 @@ void ApiListener::AddConnection(const Endpoint::Ptr& endpoint)
 		info << "Cannot connect to host '" << host << "' on port '" << port << "'";
 		debug << info.str() << std::endl << DiagnosticInformation(ex);
 		Log(LogCritical, "ApiListener", info.str());
-		Log(LogDebug, "ApiListener", debug.str());
+		Log(LogDebug, "ApiListener", debug.str(), IsLogVerbose() || endpoint->IsLogVerbose());
 	}
 }
 
@@ -358,7 +358,7 @@ void ApiListener::ApiTimerHandler(void)
 
 		if (!need) {
 			String path = GetApiDir() + "log/" + Convert::ToString(ts);
-			Log(LogNotice, "ApiListener", "Removing old log file: " + path);
+			Log(LogNotice, "ApiListener", "Removing old log file: " + path, IsLogVerbose());
 			(void)unlink(path.CStr());
 		}
 	}
@@ -423,20 +423,20 @@ void ApiListener::ApiTimerHandler(void)
 			client->SendMessage(lmessage);
 
 		Log(LogNotice, "ApiListener", "Setting log position for identity '" + endpoint->GetName() + "': " +
-			Utility::FormatDateTime("%Y/%m/%d %H:%M:%S", ts));
+			Utility::FormatDateTime("%Y/%m/%d %H:%M:%S", ts), IsLogVerbose() || endpoint->IsLogVerbose());
 	}
 
 	Endpoint::Ptr master = GetMaster();
 
 	if (master)
-		Log(LogNotice, "ApiListener", "Current zone master: " + master->GetName());
+		Log(LogNotice, "ApiListener", "Current zone master: " + master->GetName(), IsLogVerbose() || master->IsLogVerbose());
 
 	std::vector<String> names;
 	BOOST_FOREACH(const Endpoint::Ptr& endpoint, DynamicType::GetObjectsByType<Endpoint>())
 		if (endpoint->IsConnected())
 			names.push_back(endpoint->GetName() + " (" + Convert::ToString(endpoint->GetClients().size()) + ")");
 
-	Log(LogNotice, "ApiListener", "Connected endpoints: " + Utility::NaturalJoin(names));
+	Log(LogNotice, "ApiListener", "Connected endpoints: " + Utility::NaturalJoin(names), IsLogVerbose() || master->IsLogVerbose());
 }
 
 void ApiListener::RelayMessage(const MessageOrigin& origin, const DynamicObject::Ptr& secobj, const Dictionary::Ptr& message, bool log)
@@ -479,7 +479,7 @@ void ApiListener::SyncRelayMessage(const MessageOrigin& origin, const DynamicObj
 	double ts = Utility::GetTime();
 	message->Set("ts", ts);
 
-	Log(LogNotice, "ApiListener", "Relaying '" + message->Get("method") + "' message");
+	Log(LogNotice, "ApiListener", "Relaying '" + message->Get("method") + "' message", IsLogVerbose() || secobj->IsLogVerbose());
 
 	if (log)
 		PersistMessage(message, secobj);
@@ -542,7 +542,7 @@ void ApiListener::SyncRelayMessage(const MessageOrigin& origin, const DynamicObj
 			ObjectLock olock(endpoint);
 
 			if (!endpoint->GetSyncing()) {
-				Log(LogNotice, "ApiListener", "Sending message to '" + endpoint->GetName() + "'");
+				Log(LogNotice, "ApiListener", "Sending message to '" + endpoint->GetName() + "'", IsLogVerbose() || secobj->IsLogVerbose() || master->IsLogVerbose() || my_zone->IsLogVerbose() || endpoint->IsLogVerbose());
 
 				BOOST_FOREACH(const ApiClient::Ptr& client, endpoint->GetClients())
 					client->SendMessage(message);
@@ -658,7 +658,7 @@ void ApiListener::ReplayLog(const ApiClient::Ptr& client)
 			if (ts < peer_ts)
 				continue;
 
-			Log(LogNotice, "ApiListener", "Replaying log: " + path);
+			Log(LogNotice, "ApiListener", "Replaying log: " + path, IsLogVerbose() || target_endpoint->IsLogVerbose() || target_zone->IsLogVerbose());
 
 			std::fstream *fp = new std::fstream(path.CStr(), std::fstream::in);
 			StdioStream::Ptr logStream = make_shared<StdioStream>(fp, true);
@@ -708,7 +708,7 @@ void ApiListener::ReplayLog(const ApiClient::Ptr& client)
 			logStream->Close();
 		}
 
-		Log(LogNotice, "ApiListener", "Replayed " + Convert::ToString(count) + " messages.");
+		Log(LogNotice, "ApiListener", "Replayed " + Convert::ToString(count) + " messages.", IsLogVerbose() || target_endpoint->IsLogVerbose() || target_zone->IsLogVerbose());
 
 		if (last_sync) {
 			{

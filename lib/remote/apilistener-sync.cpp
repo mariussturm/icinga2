@@ -161,11 +161,11 @@ void ApiListener::SendConfigUpdate(const ApiClient::Ptr& aclient)
 		String zoneDir = zonesDir + "/" + zone->GetName();
 
 		if (!zone->IsChildOf(azone) && !zone->IsGlobal()) {
-			Log(LogNotice, "ApiListener", "Skipping sync for '" + zone->GetName() + "'. Not a child of zone '" + azone->GetName() + "'.");
+			Log(LogNotice, "ApiListener", "Skipping sync for '" + zone->GetName() + "'. Not a child of zone '" + azone->GetName() + "'.", IsLogVerbose() || endpoint->IsLogVerbose() || azone->IsLogVerbose() || zone->IsLogVerbose());
 			continue;
 		}
 		if (!Utility::PathExists(zoneDir)) {
-			Log(LogNotice, "ApiListener", "Ignoring sync for '" + zone->GetName() + "'. Zone directory '" + zoneDir + "' does not exist.");
+			Log(LogNotice, "ApiListener", "Ignoring sync for '" + zone->GetName() + "'. Zone directory '" + zoneDir + "' does not exist.", IsLogVerbose() || endpoint->IsLogVerbose() || azone->IsLogVerbose() || zone->IsLogVerbose());
 			continue;
 		}
 

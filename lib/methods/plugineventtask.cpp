@@ -58,6 +58,6 @@ void PluginEventTask::ProcessFinishedHandler(const Checkable::Ptr& checkable, co
 		Process::Arguments parguments = Process::PrepareCommand(commandLine);
 		Log(LogNotice, "PluginEventTask", "Event command for object '" + checkable->GetName() + "' (PID: " + Convert::ToString(pr.PID) +
 		    ", arguments: " + Process::PrettyPrintArguments(parguments) + ") terminated with exit code " +
-		    Convert::ToString(pr.ExitStatus) + ", output: " + pr.Output);
+		    Convert::ToString(pr.ExitStatus) + ", output: " + pr.Output, checkable->IsLogVerbose());
 	}
 }

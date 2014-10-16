@@ -63,7 +63,7 @@ bool ScheduledDowntime::EvaluateApplyRule(const Checkable::Ptr& checkable, const
 
 	std::ostringstream msgbuf2;
 	msgbuf2 << "Applying scheduled downtime '" << rule.GetName() << "' to object '" << checkable->GetName() << "' for rule " << di;
-	Log(LogDebug, "ScheduledDowntime", msgbuf2.str(), host->IsLogVerbose() || service->IsLogVerbose());
+	Log(LogDebug, "ScheduledDowntime", msgbuf2.str(), checkable->IsLogVerbose());
 
 	ConfigItemBuilder::Ptr builder = make_shared<ConfigItemBuilder>(di);
 	builder->SetType("ScheduledDowntime");

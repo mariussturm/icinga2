@@ -144,7 +144,7 @@ void CheckResultReader::ProcessCheckResultFile(const String& path) const
 	service->ProcessCheckResult(result);
 
 	Log(LogDebug, "CheckResultReader", "Processed checkresult file for host '" + attrs["host_name"] +
-		    "', service '" + attrs["service_description"] + "'");
+		    "', service '" + attrs["service_description"] + "'", host->IsLogVerbose() || service->IsLogVerbose());
 
 	{
 		ObjectLock olock(service);

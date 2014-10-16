@@ -693,7 +693,7 @@ void StatusDataWriter::UpdateObjectsCache(void)
 		Checkable::Ptr parent = dep->GetParent();
 
 		if (!parent) {
-			Log(LogDebug, "StatusDataWriter", "Missing parent for dependency '" + dep->GetName() + "'.");
+			Log(LogDebug, "StatusDataWriter", "Missing parent for dependency '" + dep->GetName() + "'.", dep->IsLogVerbose());
 			continue;
 		}
 
@@ -705,7 +705,7 @@ void StatusDataWriter::UpdateObjectsCache(void)
 
 		if (!child) {
 			continue;
-			Log(LogDebug, "StatusDataWriter", "Missing child for dependency '" + dep->GetName() + "'.");
+			Log(LogDebug, "StatusDataWriter", "Missing child for dependency '" + dep->GetName() + "'.", dep->IsLogVerbose() || parent->IsLogVerbose() || parent_host->IsLogVerbose() || parent_service->IsLogVerbose());
 		}
 
 		Host::Ptr child_host;

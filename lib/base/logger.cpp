@@ -104,11 +104,11 @@ void icinga::Log(LogSeverity severity, const String& facility,
 		if (!logger->IsActive())
 			continue;
 
-		if ((entry.Severity >= logger->GetMinSeverity()) || (entry.LogVerbose))
+		if (entry.Severity >= logger->GetMinSeverity() || (log_verbose))
 			logger->ProcessLogEntry(entry);
 	}
 
-	if (Logger::IsConsoleLogEnabled() && entry.Severity >= Logger::GetConsoleLogSeverity())
+	if ((Logger::IsConsoleLogEnabled() && entry.Severity >= Logger::GetConsoleLogSeverity()) || (Logger::IsConsoleLogEnabled() && log_verbose))
 		StreamLogger::ProcessLogEntry(std::cout, entry);
 }
 
