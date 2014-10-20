@@ -23,8 +23,8 @@ set(cli_SOURCES
   featureenablecommand.cpp featuredisablecommand.cpp featurelistcommand.cpp featureutility.cpp
   objectlistcommand.cpp
   pkinewcacommand.cpp pkinewcertcommand.cpp pkisigncsrcommand.cpp pkirequestcommand.cpp pkiticketcommand.cpp
-  repositoryobjectcommand.cpp
   variablegetcommand.cpp variablelistcommand.cpp
+  repositorycommitcommand.cpp repositoryobjectcommand.cpp repositoryutility.cpp
 )
 
 if(ICINGA2_UNITY_BUILD)
