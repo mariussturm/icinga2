@@ -18,6 +18,8 @@
  ******************************************************************************/
 
 #include "icinga/checkable.hpp"
+#include "icinga/service.hpp"
+#include "icinga/host.hpp"
 #include "icinga/icingaapplication.hpp"
 #include "base/objectlock.hpp"
 #include "base/logger.hpp"
@@ -71,14 +73,63 @@ void Checkable::SendNotifications(NotificationType type, const CheckResult::Ptr&
 	Log(LogDebug, "Checkable")
 	    << "Checkable '" << GetName() << "' has " << notifications.size() << " notification(s).";
 
+	String state_string;
+	String last_state_string;
+	Host::Ptr host;
+	Service::Ptr service;
+
+	tie(host, service) = GetHostService(GetSelf());
+
+	if (service) {
+		state_string = Service::StateToString(service->GetState());
+		last_state_string = Service::StateToString(service->GetLastState());
+	} else {
+		state_string = Host::StateToString(host->GetState());
+		last_state_string = Host::StateToString(host->GetLastState());
+	}
+
 	BOOST_FOREACH(const Notification::Ptr& notification, notifications) {
+
+		Dictionary::Ptr notified_on_state = notification->GetNotifiedOnState();
+
+		if (!notified_on_state)
+			notified_on_state = make_shared<Dictionary>();
+
 		try {
+			/* special treatment for recovery notifications */
+			if (type == NotificationRecovery) {
+
+				/* check the old state */
+
+				if (notified_on_state->Get(last_state_string) != true) {
+					Log(LogWarning, "Checkable")
+					    << "Problem Recovery: We did not notify on state " << state_string << " for checkable '"
+					    << GetName() << "' before. Bailing out.";
+
+					return;
+				}
+
+				/* clear all notifications logs on recovery */
+				notification->ResetNotifiedOnState();
+
+				Log(LogWarning, "Checkable")
+				    << "Sending recovery notification for checkable '"
+				    << GetName() << "'.";
+			}
+
+
 			notification->BeginExecuteNotification(type, cr, force, author, text);
 		} catch (const std::exception& ex) {
 			Log(LogWarning, "Checkable")
 			    << "Exception occured during notification for service '"
 			    << GetName() << "': " << DiagnosticInformation(ex);
 		}
+
+		/* store that we notified on current state for later recovery checks */
+		notified_on_state->Set(state_string, true);
+
+		Log(LogWarning, "Checkable")
+		    << "We did notify on state " << state_string << ". Storing for later recovery checks.";
 	}
 }
 

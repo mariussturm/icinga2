@@ -97,6 +97,8 @@ public:
 
 	bool CheckNotificationUserFilters(NotificationType type, const User::Ptr& user, bool force);
 
+	void ResetNotifiedOnState(void);
+
 	static String NotificationTypeToString(NotificationType type);
 
 	static boost::signals2::signal<void (const Notification::Ptr&, double, const MessageOrigin&)> OnNextNotificationChanged;

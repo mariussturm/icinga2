@@ -401,6 +401,15 @@ void Notification::ExecuteNotificationHelper(NotificationType type, const User::
 	}
 }
 
+void Notification::ResetNotifiedOnState(void)
+{
+	Dictionary::Ptr notified_on_state = GetNotifiedOnState();
+
+	BOOST_FOREACH(const Dictionary::Pair& kv, notified_on_state) {
+		notified_on_state->Set(kv.first, false);
+	}
+}
+
 int icinga::ServiceStateToFilter(ServiceState state)
 {
 	switch (state) {
@@ -469,4 +478,3 @@ void Notification::ValidateFilters(const String& location, const Dictionary::Ptr
 		    location + ": Type filter is invalid.");
 	}
 }
-
