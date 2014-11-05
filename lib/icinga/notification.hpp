@@ -26,6 +26,7 @@
 #include "icinga/usergroup.hpp"
 #include "icinga/timeperiod.hpp"
 #include "icinga/checkresult.hpp"
+#include "remote/endpoint.hpp"
 #include "remote/messageorigin.hpp"
 #include "base/array.hpp"
 
@@ -96,6 +97,8 @@ public:
 	void BeginExecuteNotification(NotificationType type, const CheckResult::Ptr& cr, bool force, const String& author = "", const String& text = "");
 
 	bool CheckNotificationUserFilters(NotificationType type, const User::Ptr& user, bool force);
+
+	Endpoint::Ptr GetCommandEndpoint(void) const;
 
 	static String NotificationTypeToString(NotificationType type);
 

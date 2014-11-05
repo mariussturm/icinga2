@@ -470,3 +470,7 @@ void Notification::ValidateFilters(const String& location, const Dictionary::Ptr
 	}
 }
 
+Endpoint::Ptr Notification::GetCommandEndpoint(void) const
+{
+	return Endpoint::GetByName(GetCommandEndpointRaw());
+}

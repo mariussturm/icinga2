@@ -26,6 +26,7 @@
 #include "icinga/notification.hpp"
 #include "icinga/comment.hpp"
 #include "icinga/downtime.hpp"
+#include "remote/endpoint.hpp"
 #include "remote/messageorigin.hpp"
 
 namespace icinga
@@ -134,11 +135,14 @@ public:
 
 	static void UpdateStatistics(const CheckResult::Ptr& cr, CheckableType type);
 
-	void ExecuteCheck(void);
+	void ExecuteCheck(const Dictionary::Ptr& resolvedMacros = Dictionary::Ptr(),
+	    bool useResolvedMacros = false);
 	void ProcessCheckResult(const CheckResult::Ptr& cr, const MessageOrigin& origin = MessageOrigin());
 
 	int GetModifiedAttributes(void) const;
 	void SetModifiedAttributes(int flags, const MessageOrigin& origin = MessageOrigin());
+
+	Endpoint::Ptr GetCommandEndpoint(void) const;
 
 	bool IsCheckPending(void) const;
 

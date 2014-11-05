@@ -255,6 +255,13 @@ void Checkable::ProcessCheckResult(const CheckResult::Ptr& cr, const MessageOrig
 	if (origin.IsLocal())
 		cr->SetCheckSource(IcingaApplication::GetInstance()->GetNodeName());
 
+	if (GetCommandEndpoint()) {
+		//TODO: Set checkresult message
+		Log(LogWarning, "Checkable")
+		    << "Name: " << GetName() << " Service: " << GetExtension("agent_service_name");
+		return;
+	}
+
 	bool reachable = IsReachable();
 	bool notification_reachable = IsReachable(DependencyNotification);
 
@@ -470,7 +477,7 @@ bool Checkable::IsCheckPending(void) const
 	return m_CheckRunning;
 }
 
-void Checkable::ExecuteCheck(void)
+void Checkable::ExecuteCheck(const Dictionary::Ptr& resolvedMacros, bool useResolvedMacros)
 {
 	CONTEXT("Executing check for object '" + GetName() + "'");
 
@@ -505,7 +512,7 @@ void Checkable::ExecuteCheck(void)
 	result->SetScheduleStart(scheduled_start);
 	result->SetExecutionStart(before_check);
 
-	GetCheckCommand()->Execute(GetSelf(), result);
+	GetCheckCommand()->Execute(GetSelf(), result, resolvedMacros, useResolvedMacros);
 }
 
 void Checkable::UpdateStatistics(const CheckResult::Ptr& cr, CheckableType type)
